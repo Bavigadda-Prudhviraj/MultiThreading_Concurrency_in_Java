@@ -1,0 +1,69 @@
+All About:-
+	1.Creating threads and providing the code that gets executes by thread
+	2.Accessing common data and code through synchronization
+	3.Transitioning between threads states.
+
+Multitasking:-
+	Multitasking allows several activities to occur on the computer
+	There are two types of multitasking are there in computer:-
+		1.Process-based multitasking
+		2.Thread-based multitasking
+		
+	1.Process-based multitasking:-
+		Allows processes(i.e programs) to run concurrently on the computer.
+		Example:- Running the Ms paint while also working with the word processor
+	
+	2.Thread-based multitasking
+		Allows parts of the same program to run concurrently on the computer
+		Example:- Ms word that is painting and formatting text at the same time
+				  In Ms word while typing at the same time internally it check spell check check happens
+		note:- why threads are better then processes
+			   1. Two threads share the same address space
+			   2. Context switching between threads is usually less expensive than between processes
+			   3. The cost of communication between threads is relatively low.
+			   
+			   
+Why MultiThreading?
+	1.In a single-threaded environment, only one task at a time can be  performed.
+	2.CPU cycles are wasted,for example, when waiting for user input.
+	3.Multitasking allows idle CPU time to be put to good use.
+
+Threads:-
+	1.A thread is an independent sequential path of execution with in a program
+	2.Many Threads can run concurrently within one program
+	3.At runtime, thread is a program exist in a common memory space and can, therefore, share both data and code( i.e., they are lightweight compared to processes)
+	4.In Java, the main class automatically includes a main thread, so there is no need to explicitly create it
+	5.They also share the process running the program.
+	
+The Main Thread:-
+	1.When a standAlone application is run, a user thread is automatically created to execute the main() method of the application
+	  This thread is called the main thread
+	2.If no Other user threads are spawned, the program terminates when the main() method finished executing
+	3.All Other threads, called child threads, are spawned from the main thread
+	4.The main() method can then finish, but the program will keep running until all user threads have completed.
+	5.The runtime environment distinguishes between user-thread & daemon threads.
+	Note:- main is also an user thread
+	6.Calling the setDaemon(boolean) method in the thread class marks the status of the thread as either daemon of user,
+	  but this must be done before the thread is start.
+	7.As long as a User thread is alive, the JVM does not terminate.
+	8.A daemon thread is at the mercy of the running system:- it is stopped
+	  if there are no more user threads running, thus terminating the program
+	  (program will terminate after all user threads are done, even daemon thread is running)
+	  
+Thread Creation:-
+	1.A thread in java is represented by an object of the Thread class.
+	2.Creating threads is achieved in one of two ways.
+		i. Implementing the " java.lang.Runnable interface ". ( best way )
+		ii.Extending the " java.lang.Thread class ".( Note:- thread class is also implements runnable ).
+	
+	imp:-
+		which thread creation is best in java thread class or runnable interface
+		1.if we use thread, it is already extending the thread class,if we need extend other class it is not possible due to diamond problem.so we can't extent multiple classes.
+		2.if we use runnable interface, we can implement as many as interfaces and extend one class
+		
+	
+	
+	
+	
+	
+	
