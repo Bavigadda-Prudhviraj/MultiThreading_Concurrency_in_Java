@@ -102,5 +102,24 @@ Synchronization Summary:
 		3.By executing a Synchronized static method of a class or a block inside a static method( in which case, the object is the Class Object representing the class in the JVM)
 		
 Thread safety:
-	1.It's the term used to describe the design of classes tha ensure that the state of their objects is always consistent,even when objects are used concurrently by multiple threads.
+	1.It's the term used to describe the design of classes that ensure that the state of their objects is always consistent,even when objects are used concurrently by multiple threads.
 		Example:- StringBuffer
+		
+Volatile ( imp for SDE-2 Interviews ):-
+	1.It is used in singleton pattern
+	2.It is a key word in java
+	3.Example: 1.if we have two threads,it interacts with CPU,Internally CPU interact with main memory RAM
+			   2.Now "Cache" comes into picture.it reduces the access time.It is for more efficient for CPU to access data from cache than for CPU accessing the data from main memory
+			   3.When there is a shared variable ( flag-T ). you can consider the top of the stack in Synchronized example.that is a shared variable
+			   4.Because that shared variable exists in the main memory and multiple thread trying to access that variable and work on it
+			   Example:- 1.Let us consider an example of shared boolean variable that in initially set true 
+			   			 2.when two threads,When both threads they don't read from the memory,They have there own cash,they read these threads read the value of this flag variable locally from their cache
+			   			 3.Now problem might happen is,If one thread changes the values of cache to false,it wont update directly into the RAM.First it update in its local cache
+			   			 4.when other thread which is accessing the cache that will be TRUE only,because it is not updated in local cash,as well as in the main memory it will be true only
+			   			 5.it will take some time to update cache values false in main memory(RAM),updation done by thread two.
+			   			 6.To get ride of the problem we introduce the volatile key word
+			   			 7.Volatile:- 1.now we declare that shared variable as volatile
+			   			 			  2.From now onwards it word read the data from cache, it read the shared variable from the main memory only( RAM );
+			   			 			  3.If thread two changes the state of the volatile shared variable them then one will have access to it right
+			   			 			  Example:- to more about volatile go through the singleton design pattern repository
+			   
