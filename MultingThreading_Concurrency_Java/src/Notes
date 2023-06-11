@@ -63,7 +63,32 @@ Thread Creation:-
 		
 	
 	
+
+Synchronization:-
+	1.Threads share the same memory space, i.e. they can share resource( objects )
+	2.However, there are critical  situation, where it is desirable that only one thread at a time has access to a shared resource
+	  example:- booking ticked for movie left one seat, so one thread has to access that seat even many threads try to access,that time synchronization helps
+	3.To handle critical situation like above example synchronization comes into picture. 
+	  
+
+Synchronized Methods:
+	1.while a thread is inside a Synchronized method of an object, all other threads that wish to execute "this" synchronized method or any other Synchronized method of the other object will have to wait.
+	2.This restriction does not apply to the thread that already has the lock and is executing a Synchronized method of the object
+	3.Such a method can invoke other Synchronized methods of the object without being blocked.
+	4.The non-Synchronized methods of the object can always be called at any time by any thread.
+
+Rules of Synchronization:
+	1.A thread must acquire the object lock associate with a shared resource it can enter the shared resource
+	2.The runtime system ensures that no other thread lock can enter a shared resource.if another thread already holds the object lock associated with it.
+	3.If a thread cannot immediately acquire the object lick,it is blocked, i.e., it must wait for the lock to become available.
+	4.when a thread exits a shared resource, the runtime system ensures that the object lock is also relinquished.if another thread is waiting for this object lock,
+	  it can try to acquire the lock in order to gain access to shared resource.
 	
-	
-	
+	5.It should be made clear that programs should not make any assumptions about the order in which threads are granted ownership of a lock, it will taken care by the CPU scheduling or whatever GBM
+
+Static Synchronized Methods:
+	1.In class one is static synchronized method and another one is Synchronized block inside the method then both are not Synchronized
+	2.because static method has lock(className.class) current object, and Synchronized block lock(this) is we are explicitly written.so both are different no Synchronized will happen
+	3.In Other words, Synchronization of static methods in a class is independent form the Synchronization of instance methods on objects of the class.
+	4.A Subclass decides whether the new defination of an inherited Synchronized method will remain synchronized in the subclass
 	
