@@ -90,5 +90,17 @@ Static Synchronized Methods:
 	1.In class one is static synchronized method and another one is Synchronized block inside the method then both are not Synchronized
 	2.because static method has lock(className.class) current object, and Synchronized block lock(this) is we are explicitly written.so both are different no Synchronized will happen
 	3.In Other words, Synchronization of static methods in a class is independent form the Synchronization of instance methods on objects of the class.
-	4.A Subclass decides whether the new defination of an inherited Synchronized method will remain synchronized in the subclass
+	4.A Subclass decides whether the new definition of an inherited Synchronized method will remain synchronized in the subclass
+
+Race Condition:
+	It occurs when two or more threads simultaneously update the same value(StackTopIndex in our case)ans, as a consequence,leave the values in an undefined or inconsistent state
 	
+Synchronization Summary:
+	A thread can hold a lock on an object:
+		1.By executing a Synchronized instance method of the object.(this)
+		2.By executing the body of a Synchronized block that Synchronizes on the object.(this)
+		3.By executing a Synchronized static method of a class or a block inside a static method( in which case, the object is the Class Object representing the class in the JVM)
+		
+Thread safety:
+	1.It's the term used to describe the design of classes tha ensure that the state of their objects is always consistent,even when objects are used concurrently by multiple threads.
+		Example:- StringBuffer

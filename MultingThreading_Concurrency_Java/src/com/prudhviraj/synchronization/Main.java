@@ -6,7 +6,7 @@ public class Main {
 		//here we are creating the array with 5 capacity ( stack )
 		Stack stack=new Stack(5);
 		/*NOTE:-1.two threads are running in parallel.
-		 		2.
+		 		
 		 */
 				
 				
