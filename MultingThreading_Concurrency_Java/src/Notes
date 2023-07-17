@@ -83,7 +83,6 @@ Rules of Synchronization:
 	3.If a thread cannot immediately acquire the object lick,it is blocked, i.e., it must wait for the lock to become available.
 	4.when a thread exits a shared resource, the runtime system ensures that the object lock is also relinquished.if another thread is waiting for this object lock,
 	  it can try to acquire the lock in order to gain access to shared resource.
-	
 	5.It should be made clear that programs should not make any assumptions about the order in which threads are granted ownership of a lock, it will taken care by the CPU scheduling or whatever GBM
 
 Static Synchronized Methods:
@@ -102,5 +101,293 @@ Synchronization Summary:
 		3.By executing a Synchronized static method of a class or a block inside a static method( in which case, the object is the Class Object representing the class in the JVM)
 		
 Thread safety:
-	1.It's the term used to describe the design of classes tha ensure that the state of their objects is always consistent,even when objects are used concurrently by multiple threads.
+	1.It's the term used to describe the design of classes that ensure that the state of their objects is always consistent,even when objects are used concurrently by multiple threads.
 		Example:- StringBuffer
+		
+Volatile ( imp for SDE-2 Interviews ):-
+	1.It is used in singleton pattern
+	2.It is a key word in java
+	3.Example: 1.if we have two threads,it interacts with CPU,Internally CPU interact with main memory RAM
+			   2.Now "Cache" comes into picture.it reduces the access time.It is for more efficient for CPU to access data from cache than for CPU accessing the data from main memory
+			   3.When there is a shared variable ( flag-T ). you can consider the top of the stack in Synchronized example.that is a shared variable
+			   4.Because that shared variable exists in the main memory and multiple thread trying to access that variable and work on it
+			   Example:- 1.Let us consider an example of shared boolean variable that in initially set true 
+			   			 2.when two threads,When both threads they don't read from the memory,They have there own cash,they read these threads read the value of this flag variable locally from their cache
+			   			 3.Now problem might happen is,If one thread changes the values of cache to false,it wont update directly into the RAM.First it update in its local cache
+			   			 4.when other thread which is accessing the cache that will be TRUE only,because it is not updated in local cash,as well as in the main memory it will be true only
+			   			 5.it will take some time to update cache values false in main memory(RAM),updation done by thread two.
+			   			 6.To get ride of the problem we introduce the volatile key word
+			   			 7.Volatile:- 1.now we declare that shared variable as volatile
+			   			 			  2.From now onwards it word read the data from cache, it read the shared variable from the main memory only( RAM );
+			   			 			  3.If thread two changes the state of the volatile shared variable them then one will have access to it right
+			   			 			  Example:- to more about volatile go through the singleton design pattern repository
+
+Producer and Consumer design Pattern Problem:
+	Example: 1. Let us consider there is queue, and there is different type of threads
+			 2.let me divide the threads into two groups
+			 	i.one thread is trying to push items into queue.
+			 	ii. another group of threads are trying to remove items from the queue.
+			 3. if we can only push items to the queue, if it doesn’t increase the capacity.
+			 4.we can only pull-out items from the queue, if there is item that is left in the queue
+
+Thread states in MultiThreading:
+
+	In Java, threads can be in different states depending on their execution status. The thread states in Java are as follows:
+		1.New: A thread is in the new state if it has been created but has not yet started executing.
+		2.Runnable: A thread is in the runnable state when it is eligible to run but may or may not be currently executing. It is ready to be scheduled by the operating system's thread scheduler.
+		3.Running: A thread is in the running state when its run() method is being executed by the CPU.
+		4.Blocked/Waiting: A thread can be in a blocked or waiting state under various circumstances, such as when it is waiting for a monitor lock (synchronized block) or for another thread to notify it using the wait() method.
+		5.Timed Waiting: A thread enters the timed waiting state when it calls methods like sleep() or wait() with a specified timeout period.
+		6.Terminated: A thread is in the terminated state if it has completed its execution or if an error or exception occurred causing it to terminate.
+
+	It's important to note that the exact names and specifications of thread states may vary depending on the Java version and implementation.
+	
+	In detail:
+		1.When a thread is created, it starts in the new state, which signifies that the thread object has been instantiated but has not yet begun execution. From the new state, the thread transitions to the "Ready to run" state, indicating that it is prepared to be scheduled by the thread scheduler.
+		2.Once the thread gets scheduled by the thread scheduler, it enters the run state. In the run state, the thread's code inside the "run()" method is executed. Once the "run()" method completes its execution, the thread moves to the dead state, which means the thread has finished its task. Once a thread is in the dead state, it cannot be restarted or resumed.
+		3.Now, let's explore the possibilities that can occur when a thread is in the running state:
+			a. If we call the thread.sleep() method, the thread enters a "Non-runnable" state, specifically the sleeping state. While in the sleeping state, the thread is temporarily inactive and does not execute its code for a specified amount of time. It remains in this state until the specified time elapses, at which point it re-enters the "Ready to run" state and competes for CPU time with other threads.
+		b. Another example of a non-runnable state is when a thread is blocked for I/O operations. In this state, the thread waits for input or output to complete, such as waiting for user input or reading data from a file or network. The thread remains blocked until the required input/output operation is completed. Once the operation finishes, the thread leaves the non-runnable state and resumes execution in the "Ready to run" state.
+	Regarding the question of why a sleeping thread does not relinquish any lock and continues to hold it without giving it to other threads:
+		When a thread is in the sleeping state, it maintains the locks it currently holds. It does not release the locks because it expects to resume its execution after the sleep duration. This ensures that other threads cannot acquire the locks during the sleeping period, which can help prevent potential synchronization issues or conflicts. However, other threads can still execute and access shared resources that are not protected by the locks held by the sleeping thread.
+
+Running and yielding:
+	In Java multithreading, the yield() method is a static method defined in the Thread class. When a thread calls yield(), it voluntarily gives up its current time slice of the CPU, allowing other threads of the same priority to execute. The yielding thread transitions from the running state to the runnable state, giving other threads a chance to run.
+	The purpose of the yield() method is to provide a hint to the scheduler that the current thread is willing to give up its execution time. However, it's important to note that the scheduler is not obligated to honor this hint. It may choose to ignore the yield() call depending on the implementation and the thread's priority.
+
+	Here are a few key points to understand about the yield() method:
+		1.Syntax: The yield() method is invoked by calling Thread.yield().
+		2.Effect: When a thread calls yield(), it moves from the running state to the runnable state(ready to run state), allowing other threads of the same priority to run. The scheduler then determines which thread will execute next based on factors like thread priority and scheduling algorithm.
+		3.Usage: The yield() method is typically used when a thread has finished its critical work and wants to give other threads a chance to run. It can be used as a cooperative mechanism to enhance fairness and efficiency in the thread scheduling.
+		4.No guarantees: There are no guarantees that yield() will have any effect on the thread scheduling. It depends on the underlying operating system and the JVM implementation. It is possible for the yielding thread to immediately regain control of the CPU.
+		5.Priority considerations: If multiple threads are waiting and all have the same priority, the yield() call allows another thread of the same priority to be scheduled. However, if no other threads of the same priority are waiting, the yielding thread will continue execution.
+	Overall, the yield() method provides a way for threads to express cooperation by giving other threads an opportunity to run. However, its usage should be done with caution and careful consideration of the specific requirements and behavior of the application
+				 
+Sleep and waking Up( wait() )
+	sleep();
+		the sleep() method is a static method defined in the Thread class. It allows a thread to pause its execution for a specified duration, giving an opportunity for other threads to execute. The sleep() method is used to introduce delays or to control the timing of threads in a multithreaded application.
+
+		Here are some key points about using sleep() for thread sleeping and waking up:
+			1.Syntax: The sleep() method is invoked by calling Thread.sleep(milliseconds), where "milliseconds" is the duration in milliseconds for which the thread will sleep. The specified duration can also be in nanoseconds by using Thread.sleep(milliseconds, nanoseconds).
+			2.Sleeping behavior: When a thread calls sleep(), it enters a "Non-runnable" state and remains inactive for the specified duration. The thread does not consume CPU resources during this period. After the specified duration elapses, the thread transitions back to the "Runnable" state and competes for CPU time with other threads.
+			3.Interruption: While a thread is sleeping, it can be interrupted by calling the interrupt() method on the sleeping thread object. This will cause the thread to wake up immediately and throw an InterruptedException. It's important to handle InterruptedException properly to respond to interruption appropriately.
+			4.Precision: The sleep() method is not guaranteed to sleep for an exact duration. The actual sleep time can be slightly longer due to factors such as thread scheduling and system timer granularity.
+			5.Usage considerations: The sleep() method is commonly used for introducing delays in a multithreaded application, implementing timing-related functionality, or simulating real-time behavior. It should be used judiciously and carefully, considering the specific requirements and synchronization needs of the application.
+			6.Object level sleep: It's important to note that sleep() is a static method, so it affects the currently executing thread. To make a specific object or thread sleep, you can include a sleep() call within the run() method of that thread or within a synchronized block, controlling the sleeping behavior for that specific context.
+		Overall, the sleep() method provides a way to pause the execution of a thread for a specified duration. It can be useful for controlling timing, introducing delays, or synchronizing threads in a multithreaded environment.
+	waking up( wait() ):
+		There is no built-in "awake" method. However, there are mechanisms available to wake up threads from certain states or notify them of specific conditions. Two common methods used for this purpose are notify() and notifyAll().\
+		
+		notify():
+			The notify() method is used to wake up a single thread that is waiting on the same object's monitor. When notify() is called, it notifies one of the waiting threads to wake up and continue its execution. The exact thread that is notified is not specified and can depend on the thread scheduler.
+				synchronized (lock) {
+    				lock.notify(); // Wakes up one waiting thread
+				}
+		notifyAll():
+			The notifyAll() method is used to wake up all threads that are waiting on the same object's monitor. When notifyAll() is called, all waiting threads are notified and can resume their execution. The threads will compete for the lock associated with the object before they can continue.
+				synchronized (lock) {
+    				lock.notifyAll(); // Wakes up all waiting threads
+				}   
+		1.These methods are typically used in combination with the wait() method, which causes a thread to wait until it is awakened or a certain condition is met. By using notify() or notifyAll(), you can signal to waiting threads that a specific event or condition has occurred and they can proceed with their execution.
+		2.It's important to note that these methods should be called within a synchronized block or method, using the same lock object that the waiting threads are synchronized on. Otherwise, an IllegalMonitorStateException will be thrown.
+
+		Additionally, it's crucial to use proper synchronization and coordination techniques to ensure correct and reliable communication between threads. Proper synchronization ensures that threads wait and wake up at the appropriate times, avoiding issues such as missed signals or race conditions.
+		
+	More about wait();
+		 The wait() method is used to make a thread pause its execution and wait until another thread notifies it to resume. The wait() method is invoked on an object and causes the current thread to release the lock on that object, allowing other threads to synchronize on the same object and potentially make changes.
+		Here are some key points about using the wait() method for thread synchronization:
+			1.Syntax: The wait() method is called on an object within a synchronized block or method. It is invoked as object.wait(), where object is the instance on which the thread is waiting.
+			2.Waiting behavior: When a thread calls wait(), it enters a "Waiting" state and releases the lock on the object it is synchronized on. The thread remains in the Waiting state until another thread invokes the notify() or notifyAll() method on the same object to wake it up.
+			3.Synchronization: The wait() method is typically used in conjunction with notify() and notifyAll() to coordinate and synchronize threads. Multiple threads can wait on the same object and be notified individually or collectively.
+			4.Conditional waiting: It is common to use wait() within a loop and include a condition to check for the desired condition before resuming execution. This helps prevent "spurious wakeups," where a thread wakes up without a corresponding notification.
+			
+			synchronized (lock) {
+    			while (!condition) {
+        			try {
+            			lock.wait(); // Pauses the thread and releases the lock
+        		} catch (InterruptedException e) {
+            		// Handle interruption
+        		}
+   			 }
+    		// Continue execution after condition is met
+			}
+	
+			5.InterruptedException: The wait() method can throw an InterruptedException if the waiting thread is interrupted by another thread. Proper exception handling is necessary to handle interruptions gracefully.
+			6.Notifying threads: To wake up a waiting thread, another thread must call the notify() or notifyAll() method on the same object. This notifies the waiting thread(s) that they can resume execution. The awakened thread will need to re-acquire the lock before it can proceed.
+
+			It's important to use proper synchronization and coordination techniques when using wait() and related methods to avoid potential issues like race conditions or missed signals. By properly synchronizing and notifying threads, you can establish effective communication and coordination between them in a multithreaded environment
+
+			
+Lock in synchronization:
+	The Lock interface and its implementations provide a mechanism for thread synchronization and mutual exclusion. The Lock interface is part of the Java java.util.concurrent.locks package and offers more advanced synchronization capabilities compared to the traditional synchronized keyword.
+
+	Here are some key points about using the Lock interface for synchronization in Java multithreading:
+		1.Acquiring and Releasing Locks: With the Lock interface, you explicitly acquire and release locks using the lock() and unlock() methods, respectively. The lock() method is used to acquire the lock, and the code following the lock() call is considered the critical section that only one thread can execute at a time. Once a thread is done executing the critical section, it should release the lock by calling the unlock() method.
+		2.Lock Implementations: The java.util.concurrent.locks package provides different implementations of the Lock interface, such as ReentrantLock, ReentrantReadWriteLock, and StampedLock. These implementations offer various features and performance characteristics, allowing you to choose the one that best suits your needs.
+		3.Explicit Locking and Unlocking: Unlike the intrinsic lock obtained by using the synchronized keyword, locks acquired through the Lock interface must be explicitly released by calling the unlock() method. It is important to ensure that the unlock() method is always called, even in exceptional cases, to prevent potential deadlocks or resource leaks.
+		4.Locking Scopes: With the Lock interface, you have more flexibility in defining the scope of locking. You can choose to lock only a specific portion of the code rather than an entire method or block. This granularity allows for more fine-grained control over synchronization and can potentially improve performance in certain scenarios.
+		5.Lock Conditions: The Lock interface provides additional features, such as lock conditions, which allow threads to wait for specific conditions to be met within a lock. Conditions are created using the newCondition() method of the Lock implementation and provide more sophisticated synchronization patterns beyond simple locking and unlocking.
+			Lock lock = new ReentrantLock();
+			lock.lock(); // Acquire the lock
+			try {
+    			// Critical section: Only one thread can execute this code at a time
+   				// Perform thread-safe operations here
+			} finally {
+    			lock.unlock(); // Release the lock in a finally block
+			}
+		6.Using the Lock interface can provide more flexibility and control over thread synchronization compared to the traditional synchronized keyword. It enables you to explicitly acquire and release locks, define locking scopes, and utilize advanced features like lock conditions. However, it is important to use the Lock interface with caution and ensure proper handling of locking and unlocking to avoid potential issues like deadlocks or resource contention.
+
+Interruption:
+	Interruption refers to a mechanism that allows one thread to signal another thread that it should interrupt its ongoing execution and potentially terminate. The interruption mechanism is designed to provide a cooperative way of canceling or stopping a thread's execution without forcefully terminating it.
+	Here are some key points about interruption in Java multithreading:
+		1.Thread Interruption: Interruption is performed by calling the interrupt() method on a thread object. When a thread is interrupted, it sets its interruption status to true, indicating that it has been requested to interrupt its execution.
+		2.Interrupted Status: Each thread has an interrupted status, which is a flag that indicates whether the thread has been interrupted. You can check the interrupted status of a thread by calling the Thread.interrupted() method or isInterrupted() method. The Thread.interrupted() method clears the interrupted status of the current thread, while isInterrupted() does not clear the status.
+		3.Handling Interruption: When a thread is interrupted, it is responsible for checking its interrupted status and taking appropriate actions based on the interruption. Common practices include gracefully terminating the thread's execution, cleaning up resources, and propagating the interruption to higher-level components.
+		4.InterruptedException: Certain blocking operations in Java, such as Thread.sleep(), Object.wait(), and I/O operations, can throw an InterruptedException when a thread is interrupted while it is in a blocked state. This exception can be caught and handled to respond to the interruption appropriately.
+		5.Interruption Policy: It is up to the thread's implementation to determine how it responds to an interruption. Thread classes like Thread and Runnable do not provide built-in interruption behavior. It is the responsibility of the thread's code to periodically check for interruption and decide how to handle it.
+			Thread thread = new Thread(() -> {
+    			while (!Thread.currentThread().isInterrupted()) {
+        		// Perform thread's work
+				if (Thread.currentThread().isInterrupted()) {
+            		// Handle interruption
+           			 break;
+       			 }
+    			}
+			});
+			// Start the thread
+			thread.start();
+			// Interrupt the thread after a certain time
+			try {
+    			Thread.sleep(5000); // Wait for 5 seconds
+    			thread.interrupt(); // Interrupt the thread
+			} catch (InterruptedException e) {
+    			// Handle interruption of the sleep operation
+			}
+		
+		6.It's important to note that interruption does not forcefully terminate a thread's execution. It is a cooperative mechanism that allows a thread to voluntarily respond to an interruption request. Thread code should regularly check for interruption and decide how to handle it appropriately to ensure proper thread termination and resource cleanup.
+		7.Interruption provides a safe and coordinated way of stopping or canceling thread execution, allowing threads to clean up resources, release locks, or gracefully terminate their work. Proper handling of interruption helps ensure the overall stability and responsiveness of multithreaded applications.
+
+Thread joining:
+	thread joining refers to a mechanism that allows one thread to wait for the completion of another thread before proceeding with its own execution. The join() method is used to achieve thread joining in Java.
+
+	Here are some key points about thread joining:
+		1.Joining Threads: The join() method is called on a thread to wait for the completion of that thread. When a thread calls join() on another thread, it suspends its execution and waits until the joined thread completes. Once the joined thread finishes its execution, the waiting thread resumes its execution.
+		2.Synchronization: Thread joining provides a way to synchronize the execution of multiple threads. By joining a thread, you ensure that a specific thread completes its task before other dependent threads proceed. This is useful in scenarios where you need to coordinate the execution order of threads or when one thread relies on the results of another thread's computation.
+		3.Sequential Execution: Thread joining allows you to achieve sequential execution of threads. By joining multiple threads in a specific order, you can ensure that they execute one after another, providing a controlled flow of execution.
+		4.Exception Propagation: When a thread joins another thread, any uncaught exception thrown by the joined thread will be propagated to the joining thread. This allows the joining thread to handle exceptions thrown by the joined thread in an appropriate manner.
+			Thread thread1 = new Thread(() -> {
+    			// Perform thread1's task
+			});
+			Thread thread2 = new Thread(() -> {
+    			// Perform thread2's task
+			});
+			// Start thread1
+			thread1.start();
+			// Join thread1, wait until thread1 completes
+			try {
+    			thread1.join();
+			} catch (InterruptedException e) {
+    			// Handle interruption while joining
+			}
+			// Start thread2
+			thread2.start();
+			// Join thread2, wait until thread2 completes
+			try {
+    			thread2.join();
+			} catch (InterruptedException e) {
+    			// Handle interruption while joining
+			}
+			// Proceed with the rest of the code after both threads have completed
+		5.In the example above, thread1 and thread2 are started and then joined one after another. The main thread will wait until both thread1 and thread2 complete their execution before proceeding with the rest of the code.
+		6.Thread joining provides a way to control the order and synchronization of thread execution in Java multithreading. It helps in coordinating the activities of multiple threads and ensures that dependent threads wait for the completion of their prerequisites	
+		
+		
+Thread priority:
+	thread priority is a mechanism that allows you to assign relative importance or preference to different threads. Each thread is assigned a priority value that determines the order in which threads are scheduled for execution by the thread scheduler. The thread scheduler is responsible for deciding which thread to execute next based on their priorities.
+		1.Thread Priorities: Threads in Java are assigned priority values ranging from 1 to 10, where 1 is the lowest priority and 10 is the highest priority. The default priority for threads is 5. You can set the priority of a thread using the setPriority(int priority) method.
+		2.Thread Scheduler: The thread scheduler is responsible for determining the order in which threads are executed. The scheduler uses thread priorities as a hint for deciding which thread to execute next. However, thread priorities are not guaranteed to be strictly followed, and the actual behavior may vary across different platforms and JVM implementations.
+		3.Preemptive Scheduling: Java uses preemptive scheduling, which means that a higher-priority thread can preempt or interrupt the execution of a lower-priority thread. When a higher-priority thread becomes eligible for execution, it can preempt the currently executing lower-priority thread and start executing immediately.
+		4.Priority Inversion: Priority inversion is a scenario where a lower-priority thread holds a resource that a higher-priority thread needs. This can lead to a situation where the higher-priority thread is blocked, waiting for the lower-priority thread to release the resource. Java provides mechanisms like thread synchronization and locks to handle priority inversion issues.
+		5.Thread Priorities and Real-Time Systems: In real-time systems, thread priorities play a critical role in meeting timing constraints. Real-time threads with higher priorities are typically assigned more CPU time to ensure that critical tasks meet their deadlines.
+			Thread thread1 = new Thread(() -> {
+    			// Perform thread1's task
+			});
+			Thread thread2 = new Thread(() -> {
+    			// Perform thread2's task
+			});
+			// Set thread priorities
+			thread1.setPriority(Thread.MAX_PRIORITY); // Priority 10
+			thread2.setPriority(Thread.MIN_PRIORITY); // Priority 1
+			// Start the threads
+			thread1.start();
+			thread2.start();
+		6.In the example above, thread1 is assigned the highest priority (Thread.MAX_PRIORITY), while thread2 is assigned the lowest priority (Thread.MIN_PRIORITY). The thread scheduler will consider these priorities when deciding the execution order of the threads.
+		7.It's important to note that thread priorities should be used with caution, as they are not always reliable for achieving deterministic behavior in thread execution. The behavior can vary depending on the underlying platform and JVM implementation. Therefore, it's generally recommended to design your multithreaded applications in a way that does not heavily rely on thread priorities for critical functionality.
+		8.In summary, thread priorities provide a means to influence the scheduling order of threads in Java multithreading. However, their usage should be carefully considered, and other synchronization mechanisms should be employed to ensure correct and reliable behavior in concurrent applications.
+	
+Thread Scheduler:
+	The thread scheduler is a part of the underlying operating system or the Java Virtual Machine (JVM) that manages the execution and scheduling of threads. The thread scheduler determines which thread should run at any given time based on various factors, including 
+			(i)thread priorities,
+			(ii) time slicing, and 
+			(iii)scheduling policies.
+		1.Task Scheduling(i): The thread scheduler is responsible for determining the order in which threads are executed and allocating CPU time to each thread. It ensures that threads are scheduled fairly and efficiently based on their priorities and other scheduling policies.
+		2.Time Slicing(ii): Time slicing is a technique used by the thread scheduler to divide CPU time among multiple threads. Each thread is allocated a small time quantum during which it can execute. When the time quantum expires, the scheduler switches to the next thread, giving it a chance to run. This allows multiple threads to make progress concurrently.
+		3.Thread Priorities(iii): Thread priorities are used by the thread scheduler as a hint for determining the order in which threads should be executed. Higher-priority threads are generally given more CPU time compared to lower-priority threads. However, thread priorities are not strictly guaranteed and can be affected by factors such as system load and the specific JVM implementation.
+		4.Scheduling Policies: The thread scheduler may use different scheduling policies to manage thread execution. 
+		  Common scheduling policies include 
+		  		i.preemptive scheduling:
+		  				Preemptive scheduling allows higher-priority threads to preempt lower-priority threads
+		  		ii.time-sharing scheduling:
+		  				time-sharing scheduling provides fair allocation of CPU time among threads.
+		5.Thread Yielding: Threads can voluntarily yield the CPU to allow other threads to run. The Thread.yield() method can be called by a thread to indicate that it is willing to give up its current time slice. The thread scheduler can then choose to switch to another thread if available.
+		6.Affinity and Binding: Some platforms and JVMs provide features for thread affinity and thread binding. Thread affinity allows you to associate a thread with a specific CPU core, while thread binding ensures that a thread always runs on the same CPU core. These features can have performance implications in certain scenarios.
+		7.NOTE:- It's important to note that the specific behavior of the thread scheduler can vary across different operating systems and JVM implementations. The Java language and the JVM provide a high-level abstraction for managing threads, and the details of scheduling are typically handled by the underlying system.
+		8.As a Java developer, we typically interact with the thread scheduler indirectly through thread creation, priority setting, and synchronization mechanisms. Understanding the basics of thread scheduling can help you design and write efficient and responsive multithreaded applications.
+		
+DeadLocks:
+	Deadlocks can occur when multiple threads are competing for shared resources and each thread is waiting for a resource that is held by another thread, resulting in a situation where all threads are blocked and unable to proceed. Java provides mechanisms such as locks, synchronized blocks, and semaphores to manage resource access and prevent deadlocks, but it's still possible for deadlocks to occur if these mechanisms are not used correctly.
+	
+	public class DeadlockExample {
+    	private static final Object resource1 = new Object();
+   		private static final Object resource2 = new Object();
+		
+		public static void main(String[] args) {
+        	Thread thread1 = new Thread(() -> {
+            	synchronized (resource1) {
+                	System.out.println("Thread 1 acquired resource 1");
+                try {
+                    Thread.sleep(100); // Introduce a delay to allow Thread 2 to acquire resource2
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                synchronized (resource2) {
+                    System.out.println("Thread 1 acquired resource 2");
+                }
+            }
+        });
+
+        Thread thread2 = new Thread(() -> {
+            synchronized (resource2) {
+                System.out.println("Thread 2 acquired resource 2");
+
+                synchronized (resource1) {
+                    System.out.println("Thread 2 acquired resource 1");
+                }
+            }
+        });
+
+        thread1.start();
+        thread2.start();
+    }
+}
+	1.In the above example, resource1 and resource2 are shared objects that the two threads (thread1 and thread2) are trying to acquire in a specific order. However, the threads acquire the resources in a different order, leading to a deadlock.
+	2.Here's what happens:
+		1.thread1 acquires resource1 and enters its synchronized block.
+		2.thread2 acquires resource2 and enters its synchronized block.
+		3.Both threads are now waiting for the other thread to release the resource they need to proceed.
+		4.As a result, both threads are blocked indefinitely, and a deadlock occurs.
+	3.To prevent deadlocks, it's essential to ensure proper ordering of resource acquisition and release. In this example, modifying the order in which the threads acquire resources can resolve the deadlock. Alternatively, using mechanisms like Lock objects from the java.util.concurrent package can provide more control over resource locking and unlocking, helping to avoid deadlocks.
+	4.It's worth noting that detecting and resolving deadlocks in complex multithreaded applications can be challenging. Various debugging and profiling tools, such as thread dump analysis, can help identify deadlocks and analyze the root causes. It's crucial to design and implement multithreaded applications with careful consideration of resource dependencies and synchronization mechanisms to minimize the chances of deadlocks.
+
+
+	
